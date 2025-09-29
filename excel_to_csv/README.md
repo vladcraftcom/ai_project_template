@@ -1,35 +1,30 @@
-# Excel → CSV Converter
+# excel_to_csv
 
-Быстрый конвертер Excel (XLSX) → CSV. Поддерживает режимы: pandas (по умолчанию) и потоковый (openpyxl) для больших файлов.
+Создано: 2025-09-29 20:27
 
-## Установка
-- Python 3.10+
-- Опционально: `pip install pandas openpyxl`
+## Что дальше
+  1) cursor_prompt.md → запонить brief и доп. требования
+  2) cursor_prompt.md → скорми агенту этот файл
+  3) plan.md → сохранить план от ИИ если он сам не сохранил
+  4) code/, run_log.txt, chat_transcript.md → вести по мере работы
+  5) audit_report.md / changelog.md / limits.md → после аудита
 
-## Примеры
+## Установка и запуск
 
-Конкретный файл:
-```bash
-python3 excel_to_csv/code/convert_xlsx_to_csv.py \
-  --input excel_to_csv/data_in/shopify_orders_20250918_202022.xlsx \
-  --out   excel_to_csv/data_out/shopify_orders_20250918_202022.csv \
-  --force
-```
+1. Активируйте venv:
+   - Linux/macOS:
+     - `source /home/codefather/Documents/ai_project_template/ai_project_template/venv/bin/activate`
 
-Общий случай (pandas):
-```bash
-python3 excel_to_csv/code/convert_xlsx_to_csv.py \
-  --input path/to/file.xlsx \
-  --sheet Sheet1 \
-  --delimiter , \
-  --encoding utf-8
-```
+2. Установите зависимости для Excel/диаграмм (если не установлены):
+   - `pip install openpyxl plotly`
 
-Большие файлы (streaming):
-```bash
-python3 excel_to_csv/code/convert_xlsx_to_csv.py \
-  --input path/to/big.xlsx \
-  --streaming \
-  --out path/to/big.csv \
-  --force
-```
+3. Запустите обработку:
+   - `python /home/codefather/Documents/ai_project_template/ai_project_template/excel_to_csv/code/process_shopify_orders.py \
+      --input /home/codefather/Documents/ai_project_template/ai_project_template/excel_to_csv/data_in/shopify_orders_20250929_202605.xlsx \
+      --out_csv /home/codefather/Documents/ai_project_template/ai_project_template/excel_to_csv/data_out/shopify_orders_20250929_202605.csv \
+      --out_html /home/codefather/Documents/ai_project_template/ai_project_template/excel_to_csv/data_out/diagram.html`
+
+4. Результат:
+   - CSV: `excel_to_csv/data_out/shopify_orders_20250929_202605.csv`
+   - Диаграмма (HTML): `excel_to_csv/data_out/diagram.html`
+   - Логи: `excel_to_csv/logs/run.log`

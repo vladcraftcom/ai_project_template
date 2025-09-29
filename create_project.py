@@ -73,7 +73,7 @@ def main():
     # 2) Brief/Prompt
     copy_or_generate("prompt_cursor_skeleton.md", project_dir / "cursor_prompt.md", refresh=args.refresh_templates)
     copy_or_generate("prompt_auditor.md", project_dir / "prompt_auditor.md", refresh=args.refresh_templates)
-    copy_or_generate("manifest.ai.md", project_dir / "manifest.ai.md", refresh=args.refresh_templates)
+    copy_or_generate("log_manifest.ai.md", project_dir / "log_manifest.ai.md", refresh=args.refresh_templates)
 
     # 3) Пустые журналы
     for name in ("chat_transcript.md","plan.md","run_log.txt","audit_report.md","changelog.md","limits.md"):

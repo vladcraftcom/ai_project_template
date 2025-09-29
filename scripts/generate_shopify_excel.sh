@@ -1,1 +1,1 @@
-python3 /Users/vladislavbenkovskij/vladcraft/excel_to_csv/code/generate_shopify_excel.py --rows 10000 --out /Users/vladislavbenkovskij/vladcraft/excel_to_csv/data_in
+python3 generate_shopify_excel.py --rows 10000 --out ./data_in

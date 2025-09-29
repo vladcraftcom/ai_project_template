@@ -1,4 +1,4 @@
-# manifest.ai.md — Vladcraft Project Log Keeper
+# log_manifest.ai.md — Vladcraft Project Log Keeper
 
 ROLE
 - Ты: Project Log Keeper (агент-хранитель журнала).
