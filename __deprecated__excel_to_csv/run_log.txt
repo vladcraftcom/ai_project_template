@@ -1,1 +1,0 @@
-[2025-09-18 20:45] CMD: python3 excel_to_csv/code/convert_xlsx_to_csv.py --input excel_to_csv/data_in/shopify_orders_20250918_202022.xlsx --out excel_to_csv/data_out/shopify_orders_20250918_202022.csv --streaming --force | ENV: py=3.10 venv=.venv | IN: shopify_orders_20250918_202022.xlsx | OUT: shopify_orders_20250918_202022.csv rows=10000 cols=28 | STATUS: OK

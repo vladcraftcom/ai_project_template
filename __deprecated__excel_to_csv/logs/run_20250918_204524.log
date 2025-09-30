@@ -1,3 +1,0 @@
-2025-09-18 20:45:24,554 [INFO] Logger initialized: excel_to_csv/logs/run_20250918_204524.log
-2025-09-18 20:45:24,559 [INFO] Options: ConversionOptions(input_path='/Users/vladislavbenkovskij/vladcraft/excel_to_csv/data_in/shopify_orders_20250918_202022.xlsx', output_path='/Users/vladislavbenkovskij/vladcraft/excel_to_csv/data_out/shopify_orders_20250918_202022.csv', sheet=None, delimiter=',', encoding='utf-8', header_row=None, line_ending='LF', quoting='minimal', decimal='.', date_format='iso', force=True, limit_rows=None, use_streaming=True)
-2025-09-18 20:45:26,900 [INFO] Conversion success (streaming). Output: /Users/vladislavbenkovskij/vladcraft/excel_to_csv/data_out/shopify_orders_20250918_202022.csv, rows=10000, cols=28
