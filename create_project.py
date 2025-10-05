@@ -4,12 +4,19 @@ import argparse, os, sys, shutil, platform, subprocess
 from pathlib import Path
 from datetime import datetime
 
+# Устанавливаем кодировку UTF-8 для Windows
+if platform.system().lower().startswith("win"):
+    import codecs
+    sys.stdout = codecs.getwriter("utf-8")(sys.stdout.detach())
+    sys.stderr = codecs.getwriter("utf-8")(sys.stderr.detach())
+
 ROOT = Path.cwd()
 
 # ======== Встроенные шаблоны (используются, если в корне нет файлов) ========
 TEMPLATES = {
-    "prompt_cursor_skeleton.md": open("./prompt_cursor_skeleton.md").read(),
-    "prompt_auditor.md": open("./prompt_auditor.md").read(),
+    "prompt_cursor_skeleton.md": open("./prompt_cursor_skeleton.md", encoding="utf-8").read(),
+    "prompt_auditor.md": open("./prompt_auditor.md", encoding="utf-8").read(),
+    "prompt_expert.md": open("./prompt_expert.md", encoding="utf-8").read(),
 }
 
 
@@ -36,15 +43,15 @@ def copy_or_generate(src_name: str, dst: Path, refresh: bool):
 
 def venv_paths(base: Path):
     if platform.system().lower().startswith("win"):
-        py = base / ".venv" / "Scripts" / "python.exe"
-        pip = base / ".venv" / "Scripts" / "pip.exe"
-        activate = base / ".venv" / "Scripts" / "activate"
-        act_hint = f"{base}\\.venv\\Scripts\\activate"
+        py = base / "venv" / "Scripts" / "python.exe"
+        pip = base / "venv" / "Scripts" / "pip.exe"
+        activate = base / "venv" / "Scripts" / "activate"
+        act_hint = f"{base}\\venv\\Scripts\\activate"
     else:
-        py = base / ".venv" / "bin" / "python"
-        pip = base / ".venv" / "bin" / "pip"
-        activate = base / ".venv" / "bin" / "activate"
-        act_hint = f"source {base}/.venv/bin/activate"
+        py = base / "venv" / "bin" / "python"
+        pip = base / "venv" / "bin" / "pip"
+        activate = base / "venv" / "bin" / "activate"
+        act_hint = f"source {base}/venv/bin/activate"
     return py, pip, activate, act_hint
 
 def run(cmd, cwd=None):
@@ -55,7 +62,7 @@ def main():
     ap = argparse.ArgumentParser(description="Create project scaffold (cross-platform).")
     ap.add_argument("project", help="project name, e.g. project04")
     ap.add_argument("--force", action="store_true", help="fill in missing files if folder exists")
-    ap.add_argument("--venv", action="store_true", help="create .venv inside project folder")
+    ap.add_argument("--venv", action="store_true", help="create venv inside project folder")
     ap.add_argument("--install", action="store_true", help="pip install base packages into venv")
     ap.add_argument("--refresh-templates", action="store_true", help="перезаписать шаблоны brief/prompt из корня (или встроенные) поверх существующих")
     args = ap.parse_args()
@@ -74,18 +81,20 @@ def main():
     copy_or_generate("prompt_cursor_skeleton.md", project_dir / "cursor_prompt.md", refresh=args.refresh_templates)
     copy_or_generate("prompt_auditor.md", project_dir / "prompt_auditor.md", refresh=args.refresh_templates)
     copy_or_generate("log_manifest.ai.md", project_dir / "log_manifest.ai.md", refresh=args.refresh_templates)
+    copy_or_generate("prompt_expert.md", project_dir / "prompt_expert.md", refresh=args.refresh_templates)
 
     # 3) Пустые журналы
-    for name in ("chat_transcript.md","plan.md","run_log.txt","audit_report.md","changelog.md","limits.md"):
+    for name in ("chat_transcript.md","plan.md","run_log.txt","audit_report.md","changelog.md"):
         ensure_file(project_dir / name)
 
     # 4) README c краткой шпаргалкой
     summary = (
-        "  1) cursor_prompt.md → запонить brief и доп. требования\n"
+        "  0) prompt_expert.md → запонить `{ОТРАСЛЬ}` и `{РОЛЬ}` и попросить провести консультацию (не обязательный шаг) \n"
+        "  1) cursor_prompt.md → запонить 'Контекст задачи' и доп. требования\n"
         "  2) cursor_prompt.md → скорми агенту этот файл\n"
         "  3) plan.md → сохранить план от ИИ если он сам не сохранил\n"
         "  4) code/, run_log.txt, chat_transcript.md → вести по мере работы\n"
-        "  5) audit_report.md / changelog.md / limits.md → после аудита\n"
+        "  5) audit_report.md / changelog.md  → после аудита\n"
     )
 
     ensure_file(
@@ -101,8 +110,8 @@ def main():
     # 5) (Опц.) venv и пакеты
     venv_hint = ""
     if args.venv:
-        print("[i] Создаю виртуалку .venv …")
-        run([sys.executable, "-m", "venv", str(project_dir / ".venv")])
+        print("[i] Создаю виртуалку venv …")
+        run([sys.executable, "-m", "venv", str(project_dir / "venv")])
         py, pip, activate, act_hint = venv_paths(project_dir)
         venv_hint = f"\nАктивируй окружение:\n  {act_hint}\n"
         if args.install:
