@@ -4,5 +4,5 @@
 
 ## Быстрый старт
 ```bash
-python3 create_project.py "{project_name}" --venv
+python create_project.py "{project_name}" --venv
 ```

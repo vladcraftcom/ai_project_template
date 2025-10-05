@@ -1,1 +1,0 @@
-python3 generate_shopify_excel.py --rows 10000 --out ./data_in
