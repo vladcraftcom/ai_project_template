@@ -43,15 +43,15 @@ def copy_or_generate(src_name: str, dst: Path, refresh: bool):
 
 def venv_paths(base: Path):
     if platform.system().lower().startswith("win"):
-        py = base / "venv" / "Scripts" / "python.exe"
-        pip = base / "venv" / "Scripts" / "pip.exe"
-        activate = base / "venv" / "Scripts" / "activate"
-        act_hint = f"{base}\\venv\\Scripts\\activate"
+        py = base / ".venv" / "Scripts" / "python.exe"
+        pip = base / ".venv" / "Scripts" / "pip.exe"
+        activate = base / ".venv" / "Scripts" / "activate"
+        act_hint = f"{base}\\.venv\\Scripts\\activate"
     else:
-        py = base / "venv" / "bin" / "python"
-        pip = base / "venv" / "bin" / "pip"
-        activate = base / "venv" / "bin" / "activate"
-        act_hint = f"source {base}/venv/bin/activate"
+        py = base / ".venv" / "bin" / "python"
+        pip = base / ".venv" / "bin" / "pip"
+        activate = base / ".venv" / "bin" / "activate"
+        act_hint = f"source {base}/.venv/bin/activate"
     return py, pip, activate, act_hint
 
 def run(cmd, cwd=None):
@@ -110,13 +110,12 @@ def main():
     # 5) (Опц.) venv и пакеты
     venv_hint = ""
     if args.venv:
-        print("[i] Создаю виртуалку venv …")
-        run([sys.executable, "-m", "venv", str(project_dir / "venv")])
+        print("[i] Создаю виртуалку .venv …")
+        run([sys.executable, "-m", "venv", str(project_dir / ".venv")])
         py, pip, activate, act_hint = venv_paths(project_dir)
         venv_hint = f"\nАктивируй окружение:\n  {act_hint}\n"
         if args.install:
             print("[i] Устанавливаю базовые пакеты:", ", ".join(PACKAGES))
-            run([str(pip), "install", "--upgrade", "pip"])
             run([str(pip), "install", *PACKAGES])
     else:
         py, pip, act_hint = None, None, None  # не используется
