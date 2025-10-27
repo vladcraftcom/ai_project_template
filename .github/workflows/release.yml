@@ -18,22 +18,22 @@ jobs:
         include:
           - os: macos-14
             target: aarch64-apple-darwin
-            artifact: ai_project_template-Darwin-arm64
+            base_name: ai_project_template-Darwin-arm64
           - os: macos-13
             target: x86_64-apple-darwin
-            artifact: ai_project_template-Darwin-x86_64
+            base_name: ai_project_template-Darwin-x86_64
           - os: ubuntu-22.04
             target: x86_64-unknown-linux-gnu
-            artifact: ai_project_template-Linux-x86_64
+            base_name: ai_project_template-Linux-x86_64
           - os: ubuntu-22.04
             target: aarch64-unknown-linux-gnu
-            artifact: ai_project_template-Linux-arm64
+            base_name: ai_project_template-Linux-arm64
           - os: windows-2022
             target: x86_64-pc-windows-msvc
-            artifact: ai_project_template-Windows-x86_64.exe
+            base_name: ai_project_template-Windows-x86_64
           - os: windows-2022
             target: aarch64-pc-windows-msvc
-            artifact: ai_project_template-Windows-arm64.exe
+            base_name: ai_project_template-Windows-arm64
 
     steps:
       - uses: actions/checkout@v4
@@ -58,21 +58,47 @@ jobs:
         run: |
           cargo build -r --target ${{ matrix.target }}
 
-      - name: Prepare artifact name
-        id: prep
+      - name: Package artifact
+        id: pack
         shell: bash
         run: |
-          EXT=""
-          case "${{ matrix.target }}" in \
-            *windows*) EXT=".exe" ;; \
+          set -euo pipefail
+          TARGET="${{ matrix.target }}"
+          BASE="${{ matrix.base_name }}"
+          BIN_DIR="target/${TARGET}/release"
+          SRC_EXE="${BIN_DIR}/ai_project_template"
+          case "$TARGET" in
+            *windows*) SRC_EXE="${BIN_DIR}/ai_project_template.exe" ;;
           esac
-          echo "ext=$EXT" >> $GITHUB_OUTPUT
+          case "${{ matrix.os }}" in
+            macos-*)
+              OUT_NAME="${BASE}.dmg"
+              STAGE="${BIN_DIR}/stage"
+              mkdir -p "$STAGE"
+              cp "$SRC_EXE" "$STAGE/ai_project_template"
+              hdiutil create -volname "AIProjectTemplate" -srcfolder "$STAGE" -ov -format UDZO "${BIN_DIR}/${OUT_NAME}"
+              echo "out_name=${OUT_NAME}" >> $GITHUB_OUTPUT
+              echo "out_path=${BIN_DIR}/${OUT_NAME}" >> $GITHUB_OUTPUT
+              ;;
+            ubuntu-*)
+              OUT_NAME="${BASE}.tar.gz"
+              (cd "$BIN_DIR" && tar czf "$OUT_NAME" "$(basename "$SRC_EXE")")
+              echo "out_name=${OUT_NAME}" >> $GITHUB_OUTPUT
+              echo "out_path=${BIN_DIR}/${OUT_NAME}" >> $GITHUB_OUTPUT
+              ;;
+            windows-*)
+              OUT_NAME="${BASE}.exe"
+              cp "$SRC_EXE" "${BIN_DIR}/${OUT_NAME}"
+              echo "out_name=${OUT_NAME}" >> $GITHUB_OUTPUT
+              echo "out_path=${BIN_DIR}/${OUT_NAME}" >> $GITHUB_OUTPUT
+              ;;
+          esac
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ matrix.artifact }}
-          path: target/${{ matrix.target }}/release/ai_project_template${{ steps.prep.outputs.ext }}
+          name: ${{ steps.pack.outputs.out_name }}
+          path: ${{ steps.pack.outputs.out_path }}
 
   release:
     needs: build-matrix
@@ -90,7 +116,10 @@ jobs:
         with:
           draft: false
           prerelease: false
+          fail_on_unmatched_files: true
           files: |
-            dist/**/ai_project_template*
+            dist/**/ai_project_template-*.dmg
+            dist/**/ai_project_template-*.tar.gz
+            dist/**/ai_project_template-*.exe
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
