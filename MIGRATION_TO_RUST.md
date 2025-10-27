@@ -33,7 +33,7 @@
 
 Предлагаемая структура:
 ```
-ai_project_template_rs/
+ai_project_template/
   Cargo.toml
   src/
     main.rs        # состояние, сообщения (Msg), update/view
@@ -241,7 +241,7 @@ Busy/блокировка: `is_busy = true` на время запуска; кн
 ---
 
 ## 5) Пошаговая миграция
-1. Создать Iced-проект `ai_project_template_rs`, не трогая Python.
+1. Создать Iced-проект `ai_project_template`, не трогая Python.
 2. Реализовать состояние/Msg/update/view с эквивалентной разметкой.
 3. Перенести валидацию имени.
 4. Реализовать `check_environment()` и вызывать при старте и по кнопке.

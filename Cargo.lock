@@ -47,7 +47,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "ai_project_template_rs"
+name = "ai_project_template"
 version = "0.1.0"
 dependencies = [
  "anyhow",
